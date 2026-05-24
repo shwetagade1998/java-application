@@ -1,0 +1,16 @@
+services:
+
+  java:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    init: true
+    continer_name: java
+    ports: 
+      - 8080:8080
+    deploy:
+      resources:
+        limits:
+           cpus: '0.5'
+           memory: 512M
