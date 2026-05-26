@@ -1,28 +1,33 @@
 FROM maven:3.9.6-eclipse-temurin-21 AS builder
 
-WORKDIR 
+WORKDIR /app
 
-COPY 
+COPY pom.xml .
 RUN mvn dependency:go-offline
 
-COPY 
+COPY . .
 RUN mvn clean package -DskipTests
 
 FROM eclipse-temurin:21-jre-alpine AS production
 
 WORKDIR /app
 
-ARG 
+ARG GIT_SHA=unknown \
+    APP_VERSION=unknown
 
-Label 
+LABEL oci.opencontainers.image.version=${APP_VERSION} \
+      oci.opencontainers.image.revision=${GIT_SHA} 
+        
 
-RUN 
+RUN addgroup -S appuser && \
+    adduser -S -G appuser mina && \
+    chown -R mina:appuser /app
 
-COPY 
+COPY --from=builder --chown=mina:appuser /app/target/*.jar app.jar
 
-USER 
+USER mina
 
-EXPOSE 
+EXPOSE 8080
 
 #explain
 CMD ["java","-Xms256m","-Xmx512m","-XX:+UseContainerSupport","-jar","app.jar"]
