@@ -5,12 +5,18 @@ services:
       context: .
       dockerfile: Dockerfile
       target: production
+      args:
+        GIT_SHA: ${GIT_SHA:-unknown}
+        APP_VERSION: ${APP_VERSION:-unknown}
     init: true
-    continer_name: java
+    container_name: java
     ports: 
       - 8080:8080
+    restart: unless-stopped
     deploy:
       resources:
         limits:
            cpus: '0.5'
            memory: 512M
+  
+    
