@@ -10,3 +10,35 @@ jobs:
 
     steps:
       - name: checkout code
+        uses: actions/checkout@v4
+      
+      - name: set up java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+      
+      - name: build with maven
+        run: |
+          cd java-application
+          mvn clean package -DskipTests
+        
+      - name: run tests
+        run: |
+          cd java-application
+          mvn test
+
+      - name: build docker image
+        run: |
+          cd java-application
+          docker build -t java-app:${{ github.sha }} .
+
+      - name: docker image info
+        run: docker imges | grep java-application
+
+      - name: build with docker compose
+        run: docker-compose build
+
+      - name: test with docker compose
+        run: docker-compose up -d && sleep 10 && http://localhost:8080
+
