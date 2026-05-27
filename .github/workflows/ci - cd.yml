@@ -17,28 +17,24 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
+
+      - name: verify files
+        run: ls -la
       
       - name: build with maven
-        run: |
-          cd java-application
-          mvn clean package -DskipTests
+        run: mvn clean package -DskipTests
         
       - name: run tests
-        run: |
-          cd java-application
-          mvn test
+        run: mvn test
 
-      - name: build docker image
-        run: |
-          cd java-application
-          docker build -t java-app:${{ github.sha }} .
+      - name: build docker images
+        run: docker build -t java-app:${{ github.sha }} .
 
       - name: docker image info
-        run: docker imges | grep java-application
+        run: docker images | grep java-app
 
-      - name: build with docker compose
-        run: docker-compose build
+      
 
       - name: test with docker compose
-        run: docker-compose up -d && sleep 10 && http://localhost:8080
+        run: docker compose up -d && sleep 30 && curl --fail http://localhost:8080/actuator/health
 
