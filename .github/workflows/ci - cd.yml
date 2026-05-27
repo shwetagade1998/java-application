@@ -36,5 +36,5 @@ jobs:
       
 
       - name: test with docker compose
-        run: docker compose up -d && sleep 30 && curl --fail http://localhost:8080/actuator/health
+        run: docker compose up -d && sleep 30 && curl --fail http://localhost:8080
 
